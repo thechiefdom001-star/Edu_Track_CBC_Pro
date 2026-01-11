@@ -39,21 +39,24 @@ const App = () => {
     }, [data]);
 
     useEffect(() => {
+        const ws = window.websim || websim;
+        if (!ws) return;
+
         const initCloudSync = async () => {
             try {
-                const project = await window.websim.getCurrentProject();
+                const project = await ws.getCurrentProject();
                 const remoteData = await Storage.pullFromCloud(project.id);
                 if (remoteData) {
                     setData(prev => Storage.mergeData(prev, remoteData, 'all'));
                 }
             } catch (err) {
-                console.warn("Initial cloud sync skipped");
+                console.warn("Initial cloud sync skipped:", err);
             }
         };
 
         const handleRemoteUpdate = async (event) => {
             const { comment } = event;
-            if (comment.raw_content.includes('[DATA_SYNC]')) {
+            if (comment && comment.raw_content && comment.raw_content.includes('[DATA_SYNC]')) {
                 const match = comment.raw_content.match(/\[DATA_SYNC\]\s+(https?:\/\/[^\s\)]+)/);
                 if (match && match[1]) {
                     setIsSyncing(true);
@@ -71,11 +74,16 @@ const App = () => {
         };
 
         initCloudSync();
-        window.websim.addEventListener('comment:created', handleRemoteUpdate);
-        return () => window.websim.removeEventListener('comment:created', handleRemoteUpdate);
+        ws.addEventListener('comment:created', handleRemoteUpdate);
+        return () => ws.removeEventListener('comment:created', handleRemoteUpdate);
     }, []);
 
     const handleCloudPush = async () => {
+        const ws = window.websim || websim;
+        if (!ws) {
+            alert("Cloud services are currently unavailable. Please try refreshing the page.");
+            return;
+        }
         setIsSyncing(true);
         const result = await Storage.pushToCloud(data);
         if (result && result.error) {
