@@ -40,6 +40,7 @@ export const Payroll = ({ data, setData }) => {
         const entry = {
             staffId,
             month: selectedMonth,
+            academicYear: data.settings.academicYear,
             ...calcs,
             updatedAt: new Date().toISOString()
         };

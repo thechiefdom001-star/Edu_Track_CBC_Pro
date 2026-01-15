@@ -88,7 +88,7 @@ export const Archives = ({ data }) => {
                             onClick=${() => setSelectedArchive(archive)}
                             class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-primary transition-colors shadow-lg shadow-slate-200"
                         >
-                            Open Records
+                            View Records
                         </button>
                     </div>
                 `)}

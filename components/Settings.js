@@ -1,6 +1,7 @@
 import { h } from 'preact';
-import { useState } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
 import htm from 'htm';
+import { Storage } from '../lib/storage.js';
 
 const html = htm.bind(h);
 
@@ -21,7 +22,11 @@ export const Settings = ({ data, setData }) => {
         modules: true
     });
     
-    const settings = data.settings;
+    const [localSettings, setLocalSettings] = useState(data.settings);
+    useEffect(() => {
+        setLocalSettings(data.settings || {});
+    }, [data.settings]);
+    const settings = localSettings;
 
     const updateFee = (grade, field, val) => {
         const newStructures = (settings.feeStructures || []).map(f => 
@@ -34,8 +39,10 @@ export const Settings = ({ data, setData }) => {
     };
 
     const handleUpdateProfile = () => {
+        // Apply local settings to global data when saving
         setUpdating(true);
-        setTimeout(() => setUpdating(false), 1500);
+        setData({ ...data, settings: { ...settings } });
+        setTimeout(() => setUpdating(false), 1000);
     };
 
     const handleImageUpload = async (e, field) => {

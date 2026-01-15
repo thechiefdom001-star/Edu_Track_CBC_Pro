@@ -22,7 +22,7 @@ export const ResultAnalysis = ({ data, onSelectStudent }) => {
             const studentAssessments = assessments.filter(a => 
                 a.studentId === student.id && 
                 a.term === filterTerm &&
-                (!filterYear || (a.date && a.date.startsWith(filterYear.split('/')[0])))
+                a.academicYear === filterYear
             );
 
             const subjectAnalysis = subjects.map(subject => {

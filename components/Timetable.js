@@ -1,6 +1,7 @@
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
 import htm from 'htm';
+import { Storage } from '../lib/storage.js';
 
 const html = htm.bind(h);
 
@@ -246,7 +247,18 @@ export const Timetable = ({ data, setData }) => {
                     </div>
                     <div class="space-y-1">
                         <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Subject</label>
-                        <input required class="w-full p-3 bg-slate-50 rounded-xl outline-none" value=${newEntry.subject} onInput=${e => setNewEntry({...newEntry, subject: e.target.value})} />
+                        ${/* Determine grade to list subjects for: class view uses selectedFilter, otherwise use newEntry.grade */''}
+                        <select required class="w-full p-3 bg-slate-50 rounded-xl outline-none"
+                            value=${newEntry.subject}
+                            onChange=${e => setNewEntry({...newEntry, subject: e.target.value})}
+                        >
+                            <option value="">Select Subject...</option>
+                            ${(() => {
+                                const subjectGrade = viewType === 'class' ? selectedFilter : newEntry.grade;
+                                const subjectList = subjectGrade ? Storage.getSubjectsForGrade(subjectGrade) : [];
+                                return subjectList.map(s => html`<option value=${s}>${s}</option>`);
+                            })()}
+                        </select>
                     </div>
                     ${viewType !== 'class' && html`
                         <div class="space-y-1">

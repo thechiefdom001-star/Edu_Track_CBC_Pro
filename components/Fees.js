@@ -63,6 +63,7 @@ export const Fees = ({ data, setData }) => {
             amount: totalAmount,
             items: { ...paymentItems },
             term: selectedTerm,
+            academicYear: data.settings.academicYear,
             date: new Date().toLocaleDateString(),
             receiptNo: 'RCP-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0')
         };
